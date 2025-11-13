@@ -399,7 +399,7 @@
                             <span class="info-label">Número(s) de Seguimiento:</span>
                             <span>
                                 ${fulfillment.trackingUrl
-                                ? `<a href="${fulfillment.trackingUrl}" target="_blank" class= traking-link">${fulfillment.trackingNumber}</a>`
+                                ? `<a href="${fulfillment.trackingUrl}" target="_blank" class="tracking-link">${fulfillment.trackingNumber}</a>`
                                 : fulfillment.trackingNumber
                                 }
                             </span>
@@ -416,7 +416,7 @@
             }
 
             const shippingPrice = order.shippingLines && order.shippingLines.length > 0
-            ? order.shippingLines[0].prince
+            ? order.shippingLines[0].price
             : '0.00';
 
             const resultHTML = `
@@ -434,7 +434,7 @@
 
             <div class="order-card">
                 <div class="order-header">
-                    <div class="order-number">Pedido${order.name}</div>
+                    <div class="order-number">Pedido #${order.name}</div>
                     <div class="status-badge ${statusClass}">${statusText}</div>
                 
                 </div>
@@ -457,7 +457,7 @@
                     <div class="info-row">
                         <span class="info-label">Dirección de Envío:</span>
                         <span>
-                            ${order.shippingAddress.adress1},
+                            ${order.shippingAddress.address1},
                             ${order.shippingAddress.city},
                             ${order.shippingAddress.province || order.shippingAddress.province_code},
                         </span>

@@ -7,8 +7,25 @@ const path = require ('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use (cors ());
-app.use (express.json ());
+// Configuración CORS
+const cosrsOptions = {
+    origin: function (origin, callback) {
+        if(!origin) return callback(null, true);
+
+        const allowedOrigins = ['https://villaromana.com.co'];
+        if (allowedOrigins.indexOf(origin) > -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(cosrsOptions));
+app.use(express.json());
 app.use(express.static('public'));
 
 
@@ -63,7 +80,7 @@ app.post('/api/search-order', async (req, res) => {
 
             let coordinadoraTraking = null;
 
-            if (order.fulfullments && order.fulfillments.length > 0) {
+            if (order.fulfillments && order.fulfillments.length > 0) {
                 for (const fulfillment of order.fulfillments) {
                     if (fulfillment.tracking_number) {
                         coordinadoraTraking = fulfillment.tracking_number;
@@ -175,16 +192,3 @@ app.listen (PORT, () => {
     process.on('unhandledRejection', (error) => {
         console.error('Unhandled Rejection:', error);
     });
-
-    const cosrsOptions = {
-        origin: function (origin, callback) {
-            if(!origin) return callback(null, true);
-
-            const allowedOrigins = ['https://villaromana.com.co'];
-        },
-            credentials: true,
-            methods: ['GET', 'POST', 'OPTIONS'],
-            allowedHeaders: ['Content-Type', 'Authorization'],
-        };
-app.use(cors(cosrsOptions));
-app.options('*', cors(cosrsOptions));
