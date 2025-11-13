@@ -68,15 +68,25 @@ app.post('/api/search-order', async (req, res) => {
             params: {
                 status: 'any',
                 email: email.toLowerCase().trim(),
-                name: orderNumber.toString(),
-                limit: 1
+                limit: 50
             }
-        }
-    );
+        });
 
         //Verificar si se encontró el pedido
         if (response.data.orders && response.data.orders.length > 0) {
-            const order = response.data.orders[0];
+            // Filtrar por número de pedido (name)
+            const order = response.data.orders.find(o => 
+                o.order_number.toString() === orderNumber || 
+                o.name === orderNumber
+            );
+
+            if (!order) {
+                console.log(`Pedido ${orderNumber} no encontrado en los resultados filtrados.`);
+                return res.json({
+                    success: false,
+                    message: 'Pedido no encontrado con el numero y correo proporcionados.'
+                });
+            }
 
             let coordinadoraTraking = null;
 
@@ -102,26 +112,26 @@ app.post('/api/search-order', async (req, res) => {
                 fulfillmentStatus: order.fulfillment_status,
                 coordinadoraTraking: coordinadoraTraking,
                 customer: {
-                    name : `${order.customer.first_name} ${order.customer.last_name}`,
-                    email: order.customer.email
+                    name : order.customer ? `${order.customer.first_name} ${order.customer.last_name}` : 'No disponible',
+                    email: order.customer ? order.customer.email : 'No disponible'
                 },
-                shippingAddress: order.shipping_address,
-                lineItems: order.line_items.map(item => ({
+                shippingAddress: order.shipping_address || null,
+                lineItems: order.line_items && order.line_items.length > 0 ? order.line_items.map(item => ({
                     title: item.title,
                     quantity: item.quantity,
                     price: item.price,
                     totalPrice: item.total_price * item.quantity
-                })),
-                subtotalPrice: order.subtotal_price,
-                totalDiscounts: order.total_discounts,
-                totalTax: order.total_tax,
-                shippingLines: order.shipping_lines,
-                fulfillments: order.fulfillments.map(f => ({
+                })) : [],
+                subtotalPrice: order.subtotal_price || '0.00',
+                totalDiscounts: order.total_discounts || '0.00',
+                totalTax: order.total_tax || '0.00',
+                shippingLines: order.shipping_lines || [],
+                fulfillments: order.fulfillments && order.fulfillments.length > 0 ? order.fulfillments.map(f => ({
                     trackingNumber: f.tracking_number,
                     trackingUrl: f.tracking_url,
                     trackingCompany: f.tracking_company,
                     status: f.status
-                }))
+                })) : []
             };
 
             console.log(`Pedido ${orderNumber} encontrado.`);
@@ -138,11 +148,14 @@ app.post('/api/search-order', async (req, res) => {
         }
 
     } catch (error) {
+        console.error('Error completo:', error);
         console.error('Error al consultar API:', error.message);
+        console.error('Stack:', error.stack);
 
         // Manejo de errores
         if (error.response) {
             // error de la API de Shopify
+            console.error('Error response data:', error.response.data);
             return res.status(error.response.status).json({
                 success: false,
                 message: 'Error al consultar el pedido',
@@ -152,7 +165,8 @@ app.post('/api/search-order', async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: 'Error interno del servidor al procesar la solicitud.'
+            message: 'Error interno del servidor al procesar la solicitud.',
+            error: error.message
         });
     }
 });

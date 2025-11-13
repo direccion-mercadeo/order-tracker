@@ -457,15 +457,15 @@
                         <span>
                             ${order.shippingAddress.address1},
                             ${order.shippingAddress.city},
-                            ${order.shippingAddress.province || order.shippingAddress.province_code},
+                            ${order.shippingAddress.province || order.shippingAddress.province_code}
                         </span>
-                        </div>
-                        ` : ''}
+                    </div>
+                    ` : ''}
 
-                        ${trackingHTML}
-                        </div>
+                    ${trackingHTML}
+                </div>
 
-                        <div class="item-list">
+                <div class="item-list">
                             <div class="items-title"> Productos:</div>
                             ${itemsHTML}
 
