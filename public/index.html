@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Track</title>
+
+    <link href="https://fonts.cdnfonts.com/css/vera-humana-95" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/optima-nova-lt-pro" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/tenor-sans" rel="stylesheet">
+
+    <style>
+        :root {
+            --principal-color: #000000;
+            --second-color: #ffffff;
+            --three-color: #202020;
+            --complementary-one: #121B2B;
+            --complementary-two: #3C3E49;
+            --complementary-three: #5B697A;
+            --public-color-one: #E52525;
+            --public-color-two: #CBBAAD;
+            --public-color-three: #B4995C;
+            --public-color-four: #68191E;
+            --public-color-five: #C5BCB4;
+            --public-color-six: #E5E1E6;
+            
+            --font-primary: 'Vera Humana 95', sans-serif;
+            --font-secondary: 'Optima Nova LT Pro', sans-serif;
+            --font-tertiary: 'Tenor Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--second-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--second-color);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUp .5s ease;
+        }
+        .logo {
+            width: 150px;
+        }
+        .logo img {
+            width: 100%;
+            object-fit: contain;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            color: var(--principal-color);
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-family: var(--font-secondary);
+        }
+        .subtitle {
+            color: var(--complementary-one);
+            margin-bottom: 30px;
+            font-size: 14px;
+            font-family: var(--font-tertiary);
+        }
+        #searchFrom{
+            max-width: 550px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: var(--font-primary);
+        }
+        .input-group {
+            width: 500px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--complementary-three);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 0 12px 10px;
+            border: 2px solid var(--public-color-six);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all .3s;
+            font-family: var(--font-primary);
+
+        }
+        input.focus {
+            outline: none;
+            border-color: var(--complementary-three);
+            box-shadow: 0 0 0 3px rgba(102,126,243, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--public-color-four);
+            color: var(--second-color);
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: var(--font-primary);
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            background: var(--complementary-three);
+            font-weight: bold;
+            
+        }
+
+        button:disabled {
+            background: var(--public-color-six);
+            cursor: not-allowed;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 3px solid var(--public-color-five);
+            border-top: 3px solid var(--public-color-three);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result, .error {
+            display: none;
+            animation: fadeIn .5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .oder.card {
+            from { opacity: 0;}
+            to { opacity: 1; }
+        }
+
+        .oder-card {
+            background: var(--public-color-five);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--public-color-six);
+        }
+        .order-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--principal-color);
+
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-fulfilled {
+            background: var(--public-color-six);
+            color: var(--three-color);
+        }
+        .status-partial{
+            background: var(--public-color-five);
+            color: var(--public-color-three);
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: var(--complementary-two);
+            font-size: 14px;
+        }
+        .info-label {
+            font-weight: 500;
+        }
+        .items-list {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--public-color-six);
+        }
+        .items-title {
+            font-weight: 600;
+            color: var(--complementary-two);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: var(--complementary-three);
+            font-size: 14px;
+        }
+        .error {
+            background: var(--public-color-five);
+            color: var(--public-color-four);
+            padding: 15px;
+            border-radius: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .customer-info {
+            background: var(--public-color-six);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .customer-info h3 {
+            color: var(--complementary-two);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .back-button {
+            background-color: var(--complementary-three);
+            margin-top: 15px;
+        }
+        .back-button:hover {
+            background-color: var(--principal-color);
+        }
+        .tracking-list {
+            color: var(--public-color-one);
+            text-decoration: none;
+        }
+        .tracking-list:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://cdn.shopify.com/s/files/1/0506/2456/1309/files/Logo_VR.png?v=1762895865" alt="">
+        </div>
+        <h1>🔍 Rastrear mi Pedido</h1>
+        <p class="subtitle">Ingresa tu número de pedido y email para consultar el estado</p>
+
+        <form id="searchFrom" onsubmit="searchOrder(event)">
+            <div class="input-group">
+                <label for="orderNumber">Número de Pedido</label>
+                <input type="text" id="orderNumber" placeholder="1234ECOMM" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="tuemail@villaromana.com.co" required>
+            </div>
+            <button type="submit" id="submitBtn">Buscar pedido</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+                <p style="margin-top: 15px; color: var(--complementary-three);">Buscando tu pedido...</p>
+            </div>
+
+            <div class="error" id="error"></div>
+            <div class="result" id="result"></div>
+        
+    </div>
+
+    <script>
+        async function searchOrder(event) {
+            event.preventDefault();
+
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            //mostrar loading
+
+            document.getElementById('searchFrom').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/search-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderNumber, email })
+                });
+                const data = await response.json();
+
+                if (data.success && data.order) {
+                    displayOrder(data.order);
+                } else {
+                    showError(data.message || 'No se encontró el pedido.');
+                }
+            } catch (error ){
+                console.error('Error fetching order:', error);
+                showError('Ocurrió un error al buscar el pedido. Por favor, intenta nuevamente.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+
+
+        
+        function displayOrder(order) {
+          const statusClass = `status-${order.fulfillmentStatus || 'unfulfilled'}`;
+    
+    // Mapeo de estados de fulfillment
+    let statusText = '';
+    
+    if (order.fulfillmentStatus === 'fulfilled') {
+        // Preparado = Enviado + número de guía
+        const trackingNumber = order.trackingCompany === 'Coordinadora'
+          ?(order.trackingNumber || order.trackingNumbers?.[0] || '')
+          : (order.trackingNumbers?.find(t => t.company === 'Coordinadora')?.number || order.trackingNumber || '');
+        statusText = trackingNumber ? `Enviado - Guía: ${trackingNumber}` : 'Enviado';
+    } else if (order.fulfillmentStatus === 'partial') {
+        // En curso = En Despacho
+        statusText = 'En Despacho';
+    } else {
+        // No preparado = Pendiente
+        statusText = 'Pendiente';
+    }
+
+            const financialStatusText = {
+                'paid': 'Pagado',
+                'pending': 'Pendiente',
+                'refunded': 'Reembolsado',
+                'partially_refunded': 'Parcialmente Reembolsado'
+            }[order.financialStatus] || order.financialStatus;
+
+            let itemsHTML = '';
+            order.lineItems.forEach(item => {
+                itemsHTML += `
+                <div class="item">
+                    <span>${item.title} x ${item.quantity}</span>
+                    <span>${order.currency} $${parseFloat(item.totalPrice).toFixed(2)}</span>
+                </div>
+                `;
+            });
+
+            let trackingHTML = '';
+            if(order.coordinadoraTracking){
+                trackingHTML += `
+                <div style="background: var(--public-color-six); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                   <div style="font-weight: 600; margin-bottom: 5px;">Seguimiento Coordinadora:</div>
+                   <div style="font-size: 20px; font-weight: 700; color: var(--public-color-one);">
+                       ${order.coordinadoraTracking}
+                     </div>
+                     <a href="https://www.coordinadora.com/seguimiento?guia=${order.coordinadoraTracking}" target="_blank" class="tracking-list">Ver en Coordinadora</a>
+                </div>
+                `;
+            }
+            if (order.fulfillments && order.fulfillments.length > 0) {
+                order.fulfillments.forEach(fulfillment => {
+                    if (fulfillment.trackingNumber && fulfillment.trackingNumber !== order.coordinadoraTracking) {
+                        trackingHTML += `
+                        <div class="info-row">
+                            <span class="info-label">Número(s) de Seguimiento:</span>
+                            <span>
+                                ${fulfillment.trackingUrl
+                                ? `<a href="${fulfillment.trackingUrl}" target="_blank" class= traking-link">${fulfillment.trackingNumber}</a>`
+                                : fulfillment.trackingNumber
+                                }
+                            </span>
+                        </div>
+                        ${fulfillment.trackingCompany ? `
+                        <div class="info-row">
+                            <span class="info-label">Compañía de Envío:</span>
+                            <span>${fulfillment.trackingCompany}</span>
+                        </div>
+                        ` : ''}
+                        `;
+                    }
+                   }); 
+            }
+
+            const shippingPrice = order.shippingLines && order.shippingLines.length > 0
+            ? order.shippingLines[0].prince
+            : '0.00';
+
+            const resultHTML = `
+            <div class="customer-info">
+            <h3> Informacioón del Cliente</h3>
+            <div class="info-row">
+                <span class="info-label">Nombre:</span>
+                <span>${order.customer.name}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span>${order.customer.email}</span>
+            </div>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-number">Pedido${order.name}</div>
+                    <div class="status-badge ${statusClass}">${statusText}</div>
+                
+                </div>
+
+                <div class="order-info">
+                    <div class="info-row">
+                        <span class="info-label">Fecha de Pedido:</span>
+                        <span>${new Date(order.createdAt).toLocaleDateString()}</span>
+                    </div>
+                      <div class="info-row">
+                            <span class="info-label">Total:</span>
+                            <span>${order.currency} $${parseFloat(order.totalPrice).toFixed(2)}</span>
+                        </div>
+                 <div class="info-row">
+                            <span class="info-label">Estado Financiero:</span>
+                            <span>${financialStatusText}</span>
+                        </div>
+
+                    ${order.shippingAddress ?  `
+                    <div class="info-row">
+                        <span class="info-label">Dirección de Envío:</span>
+                        <span>
+                            ${order.shippingAddress.adress1},
+                            ${order.shippingAddress.city},
+                            ${order.shippingAddress.province || order.shippingAddress.province_code},
+                        </span>
+                        </div>
+                        ` : ''}
+
+                        ${trackingHTML}
+                        </div>
+
+                        <div class="item-list">
+                            <div class="items-title"> Productos:</div>
+                            ${itemsHTML}
+
+                            <div class="item" style="border-top: 2px solid var(--public-color-six); margin-top: 10px; padding-top: 10px; font-weight: 600;">
+                                <span> Subtotal:</span>
+                                <span>${order.currency} $${parseFloat(order.subtotalPrice).toFixed(2)}</span>
+                            </div>
+                            ${parseFloat(order.totalDiscounts) > 0 ? `
+                            <div class="item" style="color: var(--public-color-four);">
+                                <span> Descuentos:</span>
+                                <span>- ${order.currency} $${parseFloat(order.totalDiscounts).toFixed(2)}</span>
+                            </div>
+                            ` : ''}
+
+                            <div class="item">
+                                <span> Envío:</span>
+                                <span>${order.currency} $${parseFloat(shippingPrice).toFixed(2)}</span>
+                            </div>
+
+                            ${parseFloat(order.totalTax) > 0 ? `
+                            <div class="item">
+                                <span> Impuestos:</span>
+                                <span>${order.currency} $${parseFloat(order.totalTax).toFixed(2)}</span>
+                            </div>
+                            ` : ''}
+
+                            <div class="item" style="font-weight: 700; font-size: 16px; color: var(--principal-color);">
+                                <span> Total:</span>
+                                <span>${order.currency} $${parseFloat(order.totalPrice).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+            <button class="back-button" onclick="resetSearch()">🔙 Buscar otro pedido</button>
+            `;
+
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('result').style.display = 'block';
+        }
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('searchFrom').style.display = 'block';
+        }
+        function resetSearch() {
+            document.getElementById('searchFrom').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('orderNumber').value = '';
+            document.getElementById('email').value = '';
+        }
+    </script>
+</body>
+</html>

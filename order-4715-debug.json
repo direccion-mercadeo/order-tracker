@@ -1,0 +1,493 @@
+{
+  "id": 6463779111156,
+  "admin_graphql_api_id": "gid://shopify/Order/6463779111156",
+  "app_id": 580111,
+  "browser_ip": "2800:484:9183:c7e0:5c11:f8e9:fa6f:8453",
+  "buyer_accepts_marketing": false,
+  "cancel_reason": null,
+  "cancelled_at": null,
+  "cart_token": "hWN50xkA6B1AwXFqsm1cfkHq",
+  "checkout_id": 36497422156020,
+  "checkout_token": "637a87b762c4cd3a999f94106997c265",
+  "client_details": {
+    "accept_language": "es-CO",
+    "browser_height": null,
+    "browser_ip": "2800:484:9183:c7e0:5c11:f8e9:fa6f:8453",
+    "browser_width": null,
+    "session_hash": null,
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/142.0.7444.77 Mobile/15E148 Safari/604.1"
+  },
+  "closed_at": "2025-11-10T15:49:53-05:00",
+  "confirmation_number": "V8M52TCDA",
+  "confirmed": true,
+  "contact_email": "javierbastidasmora@hotmail.com",
+  "created_at": "2025-11-07T06:20:23-05:00",
+  "currency": "COP",
+  "current_subtotal_price": "119200.00",
+  "current_subtotal_price_set": {
+    "shop_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    }
+  },
+  "current_total_additional_fees_set": null,
+  "current_total_discounts": "0.00",
+  "current_total_discounts_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    }
+  },
+  "current_total_duties_set": null,
+  "current_total_price": "129200.00",
+  "current_total_price_set": {
+    "shop_money": {
+      "amount": "129200.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "129200.00",
+      "currency_code": "COP"
+    }
+  },
+  "current_total_tax": "19031.93",
+  "current_total_tax_set": {
+    "shop_money": {
+      "amount": "19031.93",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "19031.93",
+      "currency_code": "COP"
+    }
+  },
+  "customer_locale": "es-CO",
+  "device_id": null,
+  "discount_codes": [],
+  "duties_included": false,
+  "email": "javierbastidasmora@hotmail.com",
+  "estimated_taxes": false,
+  "financial_status": "paid",
+  "fulfillment_status": "fulfilled",
+  "landing_site": "/",
+  "landing_site_ref": null,
+  "location_id": null,
+  "merchant_business_entity_id": "MTUwNjI0NTYxMzA5",
+  "merchant_of_record_app_id": null,
+  "name": "#4715ECOMM",
+  "note": null,
+  "note_attributes": [],
+  "number": 3715,
+  "order_number": 4715,
+  "order_status_url": "https://www.villaromana.com.co/50624561309/orders/bd6064b92690556bc46931927b96b0ef/authenticate?key=0f4587853a37c5722bd260306d7b9023",
+  "original_total_additional_fees_set": null,
+  "original_total_duties_set": null,
+  "payment_gateway_names": [
+    "PayU Latam v2"
+  ],
+  "phone": null,
+  "po_number": null,
+  "presentment_currency": "COP",
+  "processed_at": "2025-11-07T06:20:22-05:00",
+  "reference": null,
+  "referring_site": null,
+  "source_identifier": null,
+  "source_name": "web",
+  "source_url": null,
+  "subtotal_price": "119200.00",
+  "subtotal_price_set": {
+    "shop_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    }
+  },
+  "tags": "CM: No se localiza dirección del destina",
+  "tax_exempt": false,
+  "tax_lines": [
+    {
+      "price": "19031.93",
+      "rate": 0.19,
+      "title": "VAT",
+      "price_set": {
+        "shop_money": {
+          "amount": "19031.93",
+          "currency_code": "COP"
+        },
+        "presentment_money": {
+          "amount": "19031.93",
+          "currency_code": "COP"
+        }
+      },
+      "channel_liable": false
+    }
+  ],
+  "taxes_included": true,
+  "test": false,
+  "token": "bd6064b92690556bc46931927b96b0ef",
+  "total_cash_rounding_payment_adjustment_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_cash_rounding_refund_adjustment_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_discounts": "0.00",
+  "total_discounts_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_line_items_price": "119200.00",
+  "total_line_items_price_set": {
+    "shop_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "119200.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_outstanding": "0.00",
+  "total_price": "129200.00",
+  "total_price_set": {
+    "shop_money": {
+      "amount": "129200.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "129200.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_shipping_price_set": {
+    "shop_money": {
+      "amount": "10000.00",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "10000.00",
+      "currency_code": "COP"
+    }
+  },
+  "total_tax": "19031.93",
+  "total_tax_set": {
+    "shop_money": {
+      "amount": "19031.93",
+      "currency_code": "COP"
+    },
+    "presentment_money": {
+      "amount": "19031.93",
+      "currency_code": "COP"
+    }
+  },
+  "total_tip_received": "0.00",
+  "total_weight": 0,
+  "updated_at": "2025-11-13T07:53:10-05:00",
+  "user_id": null,
+  "billing_address": {
+    "first_name": "Javier Andrés",
+    "address1": "Calle 30A #83-25",
+    "phone": "3153762686",
+    "city": "Medellín",
+    "zip": null,
+    "province": "Antioquia",
+    "country": "Colombia",
+    "last_name": "Bastidas Mora",
+    "address2": "Apto 2401, Edificio Alpes Plaza.",
+    "company": null,
+    "latitude": 6.2317142,
+    "longitude": -75.6061404,
+    "name": "Javier Andrés Bastidas Mora",
+    "country_code": "CO",
+    "province_code": "ANT"
+  },
+  "customer": {
+    "id": 8544239124724,
+    "created_at": "2025-11-07T06:18:00-05:00",
+    "updated_at": "2025-11-13T08:20:30-05:00",
+    "first_name": "Javier Andrés",
+    "last_name": "Bastidas Mora",
+    "state": "disabled",
+    "note": null,
+    "verified_email": true,
+    "multipass_identifier": null,
+    "tax_exempt": false,
+    "email_marketing_consent": {
+      "state": "pending",
+      "opt_in_level": "confirmed_opt_in",
+      "consent_updated_at": "2025-11-13T08:20:19-05:00"
+    },
+    "sms_marketing_consent": null,
+    "tags": "shopify-forms-361037",
+    "email": "javierbastidasmora@hotmail.com",
+    "phone": null,
+    "currency": "COP",
+    "tax_exemptions": [],
+    "admin_graphql_api_id": "gid://shopify/Customer/8544239124724",
+    "default_address": {
+      "id": 9840595828980,
+      "customer_id": 8544239124724,
+      "first_name": "Javier Andrés",
+      "last_name": "Bastidas Mora",
+      "company": null,
+      "address1": "Calle 30A #83-25",
+      "address2": "Apto 2401, Edificio Alpes Plaza.",
+      "city": "Medellín",
+      "province": "Antioquia",
+      "country": "Colombia",
+      "zip": null,
+      "phone": "3153762686",
+      "name": "Javier Andrés Bastidas Mora",
+      "province_code": "ANT",
+      "country_code": "CO",
+      "country_name": "Colombia",
+      "default": true
+    }
+  },
+  "discount_applications": [],
+  "fulfillments": [
+    {
+      "id": 5849935446260,
+      "admin_graphql_api_id": "gid://shopify/Fulfillment/5849935446260",
+      "created_at": "2025-11-10T15:49:52-05:00",
+      "location_id": 57104826525,
+      "name": "#4715ECOMM.1",
+      "order_id": 6463779111156,
+      "origin_address": {},
+      "receipt": {},
+      "service": "manual",
+      "shipment_status": null,
+      "status": "success",
+      "tracking_company": "Coordinadora",
+      "tracking_number": "08180003166",
+      "tracking_numbers": [
+        "08180003166"
+      ],
+      "tracking_url": "https://coordinadora.com/rastreo/rastreo-de-guia/detalle-de-rastreo-de-guia/?guia=08180003166",
+      "tracking_urls": [
+        "https://coordinadora.com/rastreo/rastreo-de-guia/detalle-de-rastreo-de-guia/?guia=08180003166"
+      ],
+      "updated_at": "2025-11-10T15:49:53-05:00",
+      "line_items": [
+        {
+          "id": 15581522591988,
+          "admin_graphql_api_id": "gid://shopify/LineItem/15581522591988",
+          "current_quantity": 1,
+          "fulfillable_quantity": 0,
+          "fulfillment_service": "manual",
+          "fulfillment_status": "fulfilled",
+          "gift_card": false,
+          "grams": 0,
+          "name": "Bufanda Austin Reed BU00107 - U / Vinotinto",
+          "price": "119200.00",
+          "price_set": {
+            "shop_money": {
+              "amount": "119200.00",
+              "currency_code": "COP"
+            },
+            "presentment_money": {
+              "amount": "119200.00",
+              "currency_code": "COP"
+            }
+          },
+          "product_exists": true,
+          "product_id": 8216840470772,
+          "properties": [],
+          "quantity": 1,
+          "requires_shipping": true,
+          "sku": "7700010684706",
+          "taxable": true,
+          "title": "Bufanda Austin Reed BU00107",
+          "total_discount": "0.00",
+          "total_discount_set": {
+            "shop_money": {
+              "amount": "0.00",
+              "currency_code": "COP"
+            },
+            "presentment_money": {
+              "amount": "0.00",
+              "currency_code": "COP"
+            }
+          },
+          "variant_id": 46601989193972,
+          "variant_inventory_management": "shopify",
+          "variant_title": "U / Vinotinto",
+          "vendor": "Austin Reed",
+          "tax_lines": [
+            {
+              "channel_liable": false,
+              "price": "19031.93",
+              "price_set": {
+                "shop_money": {
+                  "amount": "19031.93",
+                  "currency_code": "COP"
+                },
+                "presentment_money": {
+                  "amount": "19031.93",
+                  "currency_code": "COP"
+                }
+              },
+              "rate": 0.19,
+              "title": "VAT"
+            }
+          ],
+          "duties": [],
+          "discount_allocations": []
+        }
+      ]
+    }
+  ],
+  "line_items": [
+    {
+      "id": 15581522591988,
+      "admin_graphql_api_id": "gid://shopify/LineItem/15581522591988",
+      "current_quantity": 1,
+      "fulfillable_quantity": 0,
+      "fulfillment_service": "manual",
+      "fulfillment_status": "fulfilled",
+      "gift_card": false,
+      "grams": 0,
+      "name": "Bufanda Austin Reed BU00107 - U / Vinotinto",
+      "price": "119200.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "119200.00",
+          "currency_code": "COP"
+        },
+        "presentment_money": {
+          "amount": "119200.00",
+          "currency_code": "COP"
+        }
+      },
+      "product_exists": true,
+      "product_id": 8216840470772,
+      "properties": [],
+      "quantity": 1,
+      "requires_shipping": true,
+      "sku": "7700010684706",
+      "taxable": true,
+      "title": "Bufanda Austin Reed BU00107",
+      "total_discount": "0.00",
+      "total_discount_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "COP"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "COP"
+        }
+      },
+      "variant_id": 46601989193972,
+      "variant_inventory_management": "shopify",
+      "variant_title": "U / Vinotinto",
+      "vendor": "Austin Reed",
+      "tax_lines": [
+        {
+          "channel_liable": false,
+          "price": "19031.93",
+          "price_set": {
+            "shop_money": {
+              "amount": "19031.93",
+              "currency_code": "COP"
+            },
+            "presentment_money": {
+              "amount": "19031.93",
+              "currency_code": "COP"
+            }
+          },
+          "rate": 0.19,
+          "title": "VAT"
+        }
+      ],
+      "duties": [],
+      "discount_allocations": []
+    }
+  ],
+  "payment_terms": null,
+  "refunds": [],
+  "shipping_address": {
+    "first_name": "Javier Andrés",
+    "address1": "Calle 30A #83-25",
+    "phone": "3153762686",
+    "city": "Medellín",
+    "zip": null,
+    "province": "Antioquia",
+    "country": "Colombia",
+    "last_name": "Bastidas Mora",
+    "address2": "Apto 2401, Edificio Alpes Plaza.",
+    "company": null,
+    "latitude": 6.2317142,
+    "longitude": -75.6061404,
+    "name": "Javier Andrés Bastidas Mora",
+    "country_code": "CO",
+    "province_code": "ANT"
+  },
+  "shipping_lines": [
+    {
+      "id": 5300455178484,
+      "carrier_identifier": null,
+      "code": "Estandar Nacional",
+      "discounted_price": "10000.00",
+      "discounted_price_set": {
+        "shop_money": {
+          "amount": "10000.00",
+          "currency_code": "COP"
+        },
+        "presentment_money": {
+          "amount": "10000.00",
+          "currency_code": "COP"
+        }
+      },
+      "is_removed": false,
+      "phone": null,
+      "price": "10000.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "10000.00",
+          "currency_code": "COP"
+        },
+        "presentment_money": {
+          "amount": "10000.00",
+          "currency_code": "COP"
+        }
+      },
+      "requested_fulfillment_service_id": null,
+      "source": "shopify",
+      "title": "Estandar Nacional",
+      "tax_lines": [],
+      "discount_allocations": []
+    }
+  ]
+}
