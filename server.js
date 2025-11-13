@@ -76,16 +76,28 @@ app.post('/api/search-order', async (req, res) => {
             }
         });
 
-        //Verificar si se encontró el pedido
+        console.log(`Total de órdenes encontradas: ${response.data.orders.length}`);
+        console.log(`Buscando orden con número: ${orderNumber}`);
+        
         if (response.data.orders && response.data.orders.length > 0) {
+            // Mostrar todas las órdenes encontradas para debug
+            response.data.orders.forEach(o => {
+                console.log(`  - Orden: ${o.name} (order_number: ${o.order_number})`);
+            });
+
             // Filtrar por número de pedido
-            const order = response.data.orders.find(o => 
-                o.order_number.toString() === orderNumber || 
-                o.name === orderNumber
-            );
+            const order = response.data.orders.find(o => {
+                // Normalizar el número de pedido: remover # y espacios
+                const normalizedOrderNumber = orderNumber.replace(/[#\s]/g, '').trim();
+                const normalizedName = o.name.replace(/[#\s]/g, '').trim();
+                
+                return o.order_number.toString() === normalizedOrderNumber || 
+                       normalizedName === normalizedOrderNumber;
+            });
 
             if (!order) {
                 console.log(`Pedido ${orderNumber} no encontrado en los resultados.`);
+                console.log(`Se buscó: order_number === "${orderNumber}" OR name === "${orderNumber}"`);
                 return res.json({
                     success: false,
                     message: 'Pedido no encontrado con el numero y correo proporcionados.'
@@ -184,6 +196,50 @@ app.get('/api/health', (req, res) => {
         shopifyConfigured: !!(SHOPIFY_CONFIG.domain && SHOPIFY_CONFIG.accessToken), 
         timestamp: new Date().toISOString()
     });
+});
+
+//Endpoint: Debug - Listar órdenes
+app.get('/api/debug-orders/:email', async (req, res) => {
+    const { email } = req.params;
+    
+    try {
+        console.log(`[DEBUG] Listando órdenes para: ${email}`);
+        
+        const response = await axios.get(`https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/orders.json`, {
+            headers: {
+                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                'Content-Type': 'application/json'
+            },
+            params: {
+                status: 'any',
+                email: email.toLowerCase().trim(),
+                limit: 100
+            }
+        });
+
+        const orders = response.data.orders.map(o => ({
+            name: o.name,
+            order_number: o.order_number,
+            email: o.email,
+            customer_email: o.customer ? o.customer.email : 'N/A',
+            created_at: o.created_at,
+            status: o.fulfillment_status
+        }));
+
+        console.log(`[DEBUG] Encontradas ${orders.length} órdenes`);
+        
+        return res.json({
+            success: true,
+            total: orders.length,
+            orders: orders
+        });
+    } catch (error) {
+        console.error('[DEBUG] Error:', error.message);
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 });
 
 //pagina principal 
