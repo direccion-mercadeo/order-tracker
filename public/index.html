@@ -350,9 +350,7 @@
     
     if (order.fulfillmentStatus === 'fulfilled') {
         // Preparado = Enviado + número de guía
-        const trackingNumber = order.trackingCompany === 'Coordinadora'
-          ?(order.trackingNumber || order.trackingNumbers?.[0] || '')
-          : (order.trackingNumbers?.find(t => t.company === 'Coordinadora')?.number || order.trackingNumber || '');
+        const trackingNumber = order.coordinadoraTracking || '';
         statusText = trackingNumber ? `Enviado - Guía: ${trackingNumber}` : 'Enviado';
     } else if (order.fulfillmentStatus === 'partial') {
         // En curso = En Despacho
