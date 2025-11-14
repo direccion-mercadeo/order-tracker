@@ -151,23 +151,44 @@ app.get('/api/debug-token', async (req, res) => {
 //    TEST API VERSIONS
 // ----------------------------
 app.get('/api/test-api-versions', async (req, res) => {
+    console.log('🧪 Iniciando prueba de versiones API...');
+    console.log('📡 Domain:', SHOPIFY_CONFIG.domain);
+    console.log('🔐 Token:', SHOPIFY_CONFIG.accessToken ? '***' + SHOPIFY_CONFIG.accessToken.slice(-10) : 'NO CONFIGURADO');
+    
     const versionsToTest = ['2024-10', '2024-07', '2024-04', '2024-01', '2023-10', '2023-07'];
     const results = {};
 
     for (const version of versionsToTest) {
         try {
             const url = `https://${SHOPIFY_CONFIG.domain}/api/admin/${version}/shop.json`;
+            console.log(`\n🔗 Probando ${version}...`);
+            console.log(`   URL: ${url}`);
+            
             const response = await axios.get(url, {
                 headers: {
                     'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
                     'Content-Type': 'application/json'
-                }
+                },
+                timeout: 5000
             });
-            results[version] = { status: 'OK', code: response.status };
-            console.log(`✅ Version ${version}: OK`);
+            results[version] = { 
+                status: 'OK', 
+                code: response.status,
+                shop: response.data?.shop?.name
+            };
+            console.log(`✅ ${version}: FUNCIONA - Shop: ${response.data?.shop?.name}`);
         } catch (error) {
-            results[version] = { status: 'FAILED', code: error.response?.status };
-            console.log(`❌ Version ${version}: ${error.response?.status}`);
+            const status = error.response?.status || error.code;
+            results[version] = { 
+                status: 'FAILED', 
+                code: status,
+                error: error.response?.statusText || error.message
+            };
+            console.log(`❌ ${version}: ${status} - ${error.response?.statusText || error.message}`);
+            
+            if (error.response?.data) {
+                console.log('   Detalles:', JSON.stringify(error.response.data, null, 2));
+            }
         }
     }
 
@@ -175,6 +196,7 @@ app.get('/api/test-api-versions', async (req, res) => {
         success: true,
         message: 'Resultados de prueba de versiones API',
         domain: SHOPIFY_CONFIG.domain,
+        tokenConfigured: !!SHOPIFY_CONFIG.accessToken,
         results
     });
 });
