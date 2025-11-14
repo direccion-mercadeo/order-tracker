@@ -218,7 +218,8 @@ app.get('/', (req, res) => {
 
 
 // Exportar la app para Vercel
-module.exports = app;
+const serverless = require('serverless-http');
+module.exports = serverless(app);
 
     //manejo de errores no capturados
 
