@@ -86,63 +86,87 @@ app.get('/api/health', (req, res) => {
 // ----------------------------
 app.get('/api/debug-token', async (req, res) => {
     try {
-        console.log('🔍 Verificando permisos del token...');
+        console.log('\n🔍 ========== DEBUG TOKEN ==========');
         console.log('📡 Domain:', SHOPIFY_CONFIG.domain);
         console.log('📡 API Version:', SHOPIFY_CONFIG.apiVersion);
+        console.log('🔐 Token configurado:', !!SHOPIFY_CONFIG.accessToken);
+        console.log('🔐 Token primeros 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(0, 10));
+        console.log('🔐 Token últimos 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(SHOPIFY_CONFIG.accessToken.length - 10));
         
         const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
-        console.log('📡 URL de test:', shopifyUrl);
-        console.log('🔐 Token primeros 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(0, 10));
+        console.log('📡 URL completa:', shopifyUrl);
         
         const response = await axios.get(shopifyUrl, {
             headers: {
                 'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
                 'Content-Type': 'application/json'
-            }
+            },
+            timeout: 5000
         });
 
-        console.log('✅ Token válido! Status:', response.status);
+        console.log('✅ Respuesta 200 OK');
+        console.log('🏪 Shop:', response.data?.shop?.name);
+        console.log('📊 Plan:', response.data?.shop?.plan_name);
         
         return res.json({
             success: true,
             message: 'Token es válido y tiene permisos',
             status: response.status,
             shop: response.data?.shop?.name || 'Unknown',
-            plan: response.data?.shop?.plan_name || 'Unknown'
+            plan: response.data?.shop?.plan_name || 'Unknown',
+            shopData: response.data?.shop
         });
 
     } catch (error) {
-        console.error('❌ Error al verificar token:');
-        console.error('   Status:', error.response?.status);
-        console.error('   StatusText:', error.response?.statusText);
-        console.error('   Data:', JSON.stringify(error.response?.data, null, 2));
-        console.error('   URL intentada:', error.config?.url);
+        console.error('\n❌ ========== ERROR ==========');
+        console.error('❌ Status:', error.response?.status);
+        console.error('❌ StatusText:', error.response?.statusText);
+        console.error('❌ URL:', error.config?.url);
+        console.error('❌ Headers enviados:', {
+            'X-Shopify-Access-Token': error.config?.headers?.['X-Shopify-Access-Token'] ? '***' : 'NO ENVIADO',
+            'Content-Type': error.config?.headers?.['Content-Type']
+        });
+        console.error('❌ Respuesta completa:', JSON.stringify(error.response?.data, null, 2));
+        console.error('❌ Mensaje de error:', error.message);
         
+        if (error.code === 'ECONNREFUSED') {
+            return res.status(503).json({
+                success: false,
+                message: 'No se puede conectar a Shopify',
+                status: 503,
+                error: error.message
+            });
+        }
+
         if (error.response?.status === 401) {
             return res.status(401).json({
                 success: false,
-                message: 'Token inválido, expirado o sin permisos',
+                message: 'Token inválido, expirado o sin permisos (401)',
                 status: 401,
-                hint: 'Regenera el token en Shopify Admin'
+                hint: 'Regenera el token en Shopify Admin con permisos: read_orders, read_customers',
+                tokenLength: SHOPIFY_CONFIG.accessToken?.length
             });
         }
 
         if (error.response?.status === 404) {
             return res.status(404).json({
                 success: false,
-                message: 'API version no encontrada',
+                message: 'Endpoint no encontrado (404) - Posibles causas: API version incorrecta, dominio incorrecto, o tienda no existe',
                 status: 404,
-                hint: 'Intenta con: 2024-10, 2024-07, 2024-04, 2024-01',
-                apiVersion: SHOPIFY_CONFIG.apiVersion,
-                domain: SHOPIFY_CONFIG.domain
+                debug: {
+                    domain: SHOPIFY_CONFIG.domain,
+                    apiVersion: SHOPIFY_CONFIG.apiVersion,
+                    url: error.config?.url
+                }
             });
         }
 
         return res.status(error.response?.status || 500).json({
             success: false,
-            message: 'Error desconocido',
-            status: error.response?.status,
-            error: error.response?.data
+            message: 'Error desconocido al conectar con Shopify',
+            status: error.response?.status || error.code,
+            error: error.response?.data,
+            hint: 'Verifica que el dominio y token sean correctos'
         });
     }
 });
