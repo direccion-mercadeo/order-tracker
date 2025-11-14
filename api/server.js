@@ -63,7 +63,7 @@ app.get('/api/health', (req, res) => {
 });
 //Endpoint: Buscar pedido
 
-app.post('/api/server/search-order', async (req, res) => {
+app.post('/api/search-order', async (req, res) => {
     const {orderNumber, email} = req.body;
 
     //Validacion de entrada
