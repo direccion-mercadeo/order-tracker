@@ -81,6 +81,59 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+//-----------
+// token debug
+//-----------
+app.get('/api/debug-orders/:email', async (req, res) => {
+    const { email } = req.params;
+
+    try {
+        console.log(`🔍 DEBUG: Listando órdenes para email: ${email}`);
+
+        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
+        console.log('📡 URL:', shopifyUrl);
+        console.log('📋 Parámetros:', { email, status: 'any', limit: 10 });
+
+        const response = await axios.get(shopifyUrl, {
+            headers: {
+                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                'Content-Type': 'application/json'
+            },
+            params: {
+                status: 'any',
+                email: email.toLowerCase().trim(),
+                limit: 10
+            }
+        });
+
+        console.log('✅ Órdenes encontradas:', response.data.orders?.length || 0);
+
+        return res.json({
+            success: true,
+            count: response.data.orders?.length || 0,
+            orders: (response.data.orders || []).map(o => ({
+                id: o.id,
+                name: o.name,
+                order_number: o.order_number,
+                email: o.email,
+                created_at: o.created_at,
+                total_price: o.total_price
+            }))
+        });
+
+    } catch (error) {
+        console.error('❌ Error listando órdenes:');
+        console.error('   Status:', error.response?.status);
+        console.error('   Data:', JSON.stringify(error.response?.data, null, 2));
+
+        return res.status(error.response?.status || 500).json({
+            success: false,
+            message: 'Error al obtener órdenes',
+            status: error.response?.status,
+            error: error.response?.data
+        });
+    }
+});
 // ----------------------------
 //    SEARCH ORDER ENDPOINT
 // ----------------------------
