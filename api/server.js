@@ -45,13 +45,19 @@ app.use(express.static(path.join(__dirname, '../public')));
 //    SHOPIFY CONFIG
 // --------------------
 const SHOPIFY_CONFIG = {
-    domain: process.env.SHOPIFY_DOMAIN,
-    accessToken: process.env.SHOPIFY_ACCESS_TOKEN,
-    apiVersion: process.env.SHOPIFY_API_VERSION
+    domain: process.env.SHOPIFY_DOMAIN?.toString().trim() || undefined,
+    accessToken: process.env.SHOPIFY_ACCESS_TOKEN?.toString().trim() || undefined,
+    apiVersion: process.env.SHOPIFY_API_VERSION?.toString().trim() || '2025-10'
 };
 
+// Log de diagnóstico (no mostrar token completo en producción)
+console.log('⚙️ CONFIGURACIÓN CARGADA:');
+console.log('  - SHOPIFY_DOMAIN:', JSON.stringify(SHOPIFY_CONFIG.domain));
+console.log('  - SHOPIFY_ACCESS_TOKEN set?:', !!SHOPIFY_CONFIG.accessToken ? '✅' : '❌');
+console.log('  - SHOPIFY_API_VERSION:', SHOPIFY_CONFIG.apiVersion);
+
 if (!SHOPIFY_CONFIG.domain || !SHOPIFY_CONFIG.accessToken) {
-    console.error("❌ Error: faltan variables de entorno de Shopify.");
+    console.error("❌ ERROR CRÍTICO: Faltan variables de entorno de Shopify. Revisa Vercel > Settings > Environment Variables (Production).");
 }
 
 // --------------------
