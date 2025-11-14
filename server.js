@@ -3,7 +3,6 @@ const express = require ('express');
 const axios = require ('axios');
 const cors = require ('cors');
 const path = require ('path');
-const serverless = require('serverless-http');
 
 const app = express();
 
@@ -219,7 +218,7 @@ app.get('/', (req, res) => {
 
 
 // Exportar la app para Vercel
-module.exports.handler = serverless(app);
+module.exports = app;
 
     //manejo de errores no capturados
 
