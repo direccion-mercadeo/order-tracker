@@ -81,6 +81,104 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// ----------------------------
+//    DEBUG TOKEN ENDPOINT
+// ----------------------------
+app.get('/api/debug-token', async (req, res) => {
+    try {
+        console.log('🔍 Verificando permisos del token...');
+        console.log('📡 Domain:', SHOPIFY_CONFIG.domain);
+        console.log('📡 API Version:', SHOPIFY_CONFIG.apiVersion);
+        
+        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
+        console.log('📡 URL de test:', shopifyUrl);
+        console.log('🔐 Token primeros 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(0, 10));
+        
+        const response = await axios.get(shopifyUrl, {
+            headers: {
+                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('✅ Token válido! Status:', response.status);
+        
+        return res.json({
+            success: true,
+            message: 'Token es válido y tiene permisos',
+            status: response.status,
+            shop: response.data?.shop?.name || 'Unknown',
+            plan: response.data?.shop?.plan_name || 'Unknown'
+        });
+
+    } catch (error) {
+        console.error('❌ Error al verificar token:');
+        console.error('   Status:', error.response?.status);
+        console.error('   StatusText:', error.response?.statusText);
+        console.error('   Data:', JSON.stringify(error.response?.data, null, 2));
+        console.error('   URL intentada:', error.config?.url);
+        
+        if (error.response?.status === 401) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token inválido, expirado o sin permisos',
+                status: 401,
+                hint: 'Regenera el token en Shopify Admin'
+            });
+        }
+
+        if (error.response?.status === 404) {
+            return res.status(404).json({
+                success: false,
+                message: 'API version no encontrada',
+                status: 404,
+                hint: 'Intenta con: 2024-10, 2024-07, 2024-04, 2024-01',
+                apiVersion: SHOPIFY_CONFIG.apiVersion,
+                domain: SHOPIFY_CONFIG.domain
+            });
+        }
+
+        return res.status(error.response?.status || 500).json({
+            success: false,
+            message: 'Error desconocido',
+            status: error.response?.status,
+            error: error.response?.data
+        });
+    }
+});
+
+// ----------------------------
+//    TEST API VERSIONS
+// ----------------------------
+app.get('/api/test-api-versions', async (req, res) => {
+    const versionsToTest = ['2024-10', '2024-07', '2024-04', '2024-01', '2023-10', '2023-07'];
+    const results = {};
+
+    for (const version of versionsToTest) {
+        try {
+            const url = `https://${SHOPIFY_CONFIG.domain}/api/admin/${version}/shop.json`;
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                    'Content-Type': 'application/json'
+                }
+            });
+            results[version] = { status: 'OK', code: response.status };
+            console.log(`✅ Version ${version}: OK`);
+        } catch (error) {
+            results[version] = { status: 'FAILED', code: error.response?.status };
+            console.log(`❌ Version ${version}: ${error.response?.status}`);
+        }
+    }
+
+    return res.json({
+        success: true,
+        message: 'Resultados de prueba de versiones API',
+        domain: SHOPIFY_CONFIG.domain,
+        results
+    });
+});
+
 //-----------
 // token debug
 //-----------
