@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 const SHOPIFY_CONFIG = {
     domain: process.env.SHOPIFY_DOMAIN?.toString().trim() || undefined,
     accessToken: process.env.SHOPIFY_ACCESS_TOKEN?.toString().trim() || undefined,
-    apiVersion: process.env.SHOPIFY_API_VERSION?.toString().trim() || '2024-10'  // ⭐ CAMBIAR A 2024-10
+    apiVersion: '2024-10'  // Hardcoded - no usar variable de entorno
 };
 
 // Log de diagnóstico (no mostrar token completo en producción)
