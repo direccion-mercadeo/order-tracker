@@ -303,42 +303,53 @@
     </div>
 
     <script>
-        async function searchOrder(event) {
-            event.preventDefault();
+      
+async function searchOrder() {
+    const orderNumber = document.getElementById('orderNumber').value.trim();
+    const email = document.getElementById('email').value.trim();
+    
+    if (!orderNumber || !email) {
+        alert('Por favor completa los campos');
+        return;
+    }
 
-            const orderNumber = document.getElementById('orderNumber').value.trim();
-            const email = document.getElementById('email').value.trim();
+    try {
+        // ⭐ URL ABSOLUTA DE VERCEL
+        const API_URL = 'https://order-tracker-five-eta.vercel.app/api/search-order';
+        
+        console.log('🚀 Enviando petición a:', API_URL);
+        console.log('📦 Datos:', { orderNumber, email });
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderNumber, email })
+        });
 
-            //mostrar loading
+        console.log('📊 Response Status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Respuesta del servidor:', data);
 
-            document.getElementById('searchFrom').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-            document.getElementById('result').style.display = 'none';
-
-            try {
-                const response = await fetch('api/search-order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ orderNumber, email })
-                });
-                const data = await response.json();
-
-                if (data.success && data.order) {
-                    displayOrder(data.order);
-                } else {
-                    showError(data.message || 'No se encontró el pedido.');
-                }
-            } catch (error){
-                console.error('Error fetching order:', error);
-                showError('Ocurrió un error al buscar el pedido. Por favor, intenta nuevamente.');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
+        if (!data.success) {
+            alert(data.message || 'Pedido no encontrado');
+            return;
         }
 
+        displayOrder(data.order);
+
+    } catch (error) {
+        console.error('❌ Error completo:', error);
+        console.error('📋 Stack:', error.stack);
+        alert('Ocurrió un error al buscar el pedido. Por favor, intenta nuevamente.\n\nError: ' + error.message);
+    }
+}
 
 
         

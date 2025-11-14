@@ -14,18 +14,22 @@ const corsOptions = {
         if (!origin) return callback(null, true);  // permite requests internas sin origen
 
         const allowedOrigins = [
-            process.env.SHOPIFY_DOMAIN,
-            'https://' + process.env.SHOPIFY_DOMAIN
-        ];
+            'https://villaromana.myshopify.com',
+            'https://www.villaromana.com.co',
+            'https://villaromana.com.co',
+            'https://order-tracker-five-eta.vercel.app',
+            process.env.SHOPIFY_DOMAIN ? `https://${process.env.SHOPIFY_DOMAIN}` : null
+        ].filter(Boolean);
 
-        if (
-            allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', ''))) ||
-            origin.includes('.myshopify.com') ||
-            origin.includes('.vercel.app')
-        ) {
-            callback(null, true);
-        } else {
-            callback(null, true);
+                console.log('🔐 CORS - Origin recibido:', origin);
+        console.log('🔐 CORS - Origins permitidos:', allowedOrigins);
+        if (allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '')))) {
+            console.log('✅ CORS - Permitido');
+            return callback(null, true);
+        }
+  if (origin.includes('.vercel.app') || origin.includes('.myshopify.com')) {
+            console.log('✅ CORS - Permitido (wildcard)');
+            return callback(null, true);
         }
     },
     credentials: true,
