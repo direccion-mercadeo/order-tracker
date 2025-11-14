@@ -82,6 +82,92 @@ app.get('/api/health', (req, res) => {
 });
 
 // ----------------------------
+//    DIAGNOSTIC ENDPOINT
+// ----------------------------
+app.get('/api/diagnostic', async (req, res) => {
+    console.log('\n🔧 ========== DIAGNOSTIC ==========');
+    
+    const diagnostics = {
+        timestamp: new Date().toISOString(),
+        environment: {
+            NODE_ENV: process.env.NODE_ENV,
+            SHOPIFY_DOMAIN: process.env.SHOPIFY_DOMAIN || 'NOT SET',
+            SHOPIFY_ACCESS_TOKEN: process.env.SHOPIFY_ACCESS_TOKEN ? '***' + process.env.SHOPIFY_ACCESS_TOKEN.slice(-10) : 'NOT SET',
+            SHOPIFY_API_VERSION: process.env.SHOPIFY_API_VERSION || 'NOT SET'
+        },
+        config: SHOPIFY_CONFIG,
+        tests: {}
+    };
+
+    // Test 1: Verificar que axios está disponible
+    try {
+        diagnostics.tests.axios = 'OK - axios importado correctamente';
+    } catch (e) {
+        diagnostics.tests.axios = 'FAILED - ' + e.message;
+    }
+
+    // Test 2: Verificar formato del token
+    if (SHOPIFY_CONFIG.accessToken) {
+        diagnostics.tests.tokenFormat = {
+            length: SHOPIFY_CONFIG.accessToken.length,
+            startsWith: SHOPIFY_CONFIG.accessToken.substring(0, 6),
+            format: SHOPIFY_CONFIG.accessToken.startsWith('shpat_') ? 'VALID (shpat_)' : 'UNKNOWN FORMAT'
+        };
+    } else {
+        diagnostics.tests.tokenFormat = 'FAILED - Token no configurado';
+    }
+
+    // Test 3: Verificar dominio
+    if (SHOPIFY_CONFIG.domain) {
+        diagnostics.tests.domain = {
+            value: SHOPIFY_CONFIG.domain,
+            hasHttps: SHOPIFY_CONFIG.domain.includes('https'),
+            isMyshopify: SHOPIFY_CONFIG.domain.includes('myshopify.com')
+        };
+    } else {
+        diagnostics.tests.domain = 'FAILED - Domain no configurado';
+    }
+
+    // Test 4: Intentar llamada a Shopify
+    try {
+        const url = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
+        const response = await axios.get(url, {
+            headers: {
+                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000
+        });
+        
+        diagnostics.tests.shopifyConnection = {
+            status: 'SUCCESS',
+            code: response.status,
+            shopName: response.data?.shop?.name,
+            shopPlan: response.data?.shop?.plan_name
+        };
+        
+        console.log('✅ Conexión a Shopify: SUCCESS');
+    } catch (error) {
+        diagnostics.tests.shopifyConnection = {
+            status: 'FAILED',
+            code: error.response?.status || error.code,
+            message: error.message,
+            responseData: error.response?.data,
+            url: error.config?.url,
+            headers: {
+                token: error.config?.headers?.['X-Shopify-Access-Token'] ? '***' : 'MISSING'
+            }
+        };
+        
+        console.log('❌ Conexión a Shopify: FAILED');
+        console.log('   Error:', error.message);
+        console.log('   Status:', error.response?.status);
+    }
+
+    return res.json(diagnostics);
+});
+
+// ----------------------------
 //    DEBUG TOKEN ENDPOINT
 // ----------------------------
 app.get('/api/debug-token', async (req, res) => {
