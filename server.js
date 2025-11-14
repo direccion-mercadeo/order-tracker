@@ -10,8 +10,7 @@ const app = express();
 app.use(cors({
     origin: [
         'https://villaromana.com.co',
-        'http://localhost:3000',
-        'http://localhost:5000',
+        'https://villaromana.myshopify.com'
     ],
     credentials: true
 }));
