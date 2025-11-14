@@ -61,7 +61,7 @@ app.use((req, res, next) => {
 // --------------------
 //       HEALTH
 // --------------------
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
     res.json({
         status: 'OK',
         shopifyConfigured: !!(SHOPIFY_CONFIG.domain && SHOPIFY_CONFIG.accessToken),
@@ -74,7 +74,7 @@ app.get('/health', (req, res) => {
 // ----------------------------
 //    SEARCH ORDER ENDPOINT
 // ----------------------------
-app.post('/search-order', async (req, res) => {
+app.post('/api/search-order', async (req, res) => {
     const { orderNumber, email } = req.body;
 
     if (!orderNumber || !email) {
@@ -88,7 +88,7 @@ app.post('/search-order', async (req, res) => {
         console.log(`🔍 Buscando pedido: ${orderNumber} - Email: ${email}`);
 
         const response = await axios.get(
-            `https://${SHOPIFY_CONFIG.domain}/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`,
+            `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`,
             {
                 headers: {
                     'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
