@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 });
 
 // Endpoint: Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
         shopifyConfigured: !!(SHOPIFY_CONFIG.domain && SHOPIFY_CONFIG.accessToken),
@@ -62,7 +62,7 @@ app.get('/api/health', (req, res) => {
 });
 //Endpoint: Buscar pedido
 
-app.post('/api/search-order', async (req, res) => {
+app.post('/search-order', async (req, res) => {
     const {orderNumber, email} = req.body;
 
     //Validacion de entrada
@@ -77,7 +77,7 @@ app.post('/api/search-order', async (req, res) => {
 
         //Consultar Shopify API
 
-        const response = await axios.get(`https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/orders.json`, {
+        const response = await axios.get(`https://${SHOPIFY_CONFIG.domain}/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`, {
             headers: {
                 'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
                 'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ app.post('/api/search-order', async (req, res) => {
 
 //Endpoint: Health check
 
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
         shopifyConfigured: !!(SHOPIFY_CONFIG.domain && SHOPIFY_CONFIG.accessToken), 
