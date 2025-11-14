@@ -5,22 +5,23 @@ const cors = require ('cors');
 const path = require ('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Configuración CORS
 const cosrsOptions = {
     origin: function (origin, callback) {
         // Permitir localhost en desarrollo y el dominio en producción
+         if (!origin) return callback(null, true);
         const allowedOrigins = [
-            'https://villaromana.com.co',
-            'http://localhost:3000',
-            'http://localhost:5000'
+           process.env.SHOPIFY_DOMAIN,
+            'https://' + process.env.SHOPIFY_DOMAIN,
         ];
         
-        if (!origin || allowedOrigins.indexOf(origin) > -1) {
+         if (allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', ''))) || 
+            origin.includes('.myshopify.com') ||
+            origin.includes('.vercel.app')) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(null, true);
         }
     },
     credentials: true,
@@ -29,10 +30,9 @@ const cosrsOptions = {
 };
 
 app.use(cors(cosrsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public'));
-
-
 
 //Configuracion de Shopify
 
@@ -44,9 +44,22 @@ const SHOPIFY_CONFIG = {
 
 if(!SHOPIFY_CONFIG.domain || !SHOPIFY_CONFIG.accessToken) {
     console.error("Error: faltan variables de entorno de Shopify.");
-    process.exit(1);
 }
+app.use((req, res, next) => {
+    console.log(`📥 ${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+});
 
+// Endpoint: Health check
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        shopifyConfigured: !!(SHOPIFY_CONFIG.domain && SHOPIFY_CONFIG.accessToken),
+        shopifyDomain: SHOPIFY_CONFIG.domain,
+        apiVersion: SHOPIFY_CONFIG.apiVersion,
+        timestamp: new Date().toISOString()
+    });
+});
 //Endpoint: Buscar pedido
 
 app.post('/api/search-order', async (req, res) => {
@@ -203,23 +216,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-//Iniciar el servidor
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`
-    ╔════════════════════════════════════════╗
-    ║   🚀 Order Tracker Server Running     ║
-    ╠════════════════════════════════════════╣
-    ║   Port: ${PORT}                       ║
-    ║   Environment: ${process.env.NODE_ENV || 'development'}          ║
-    ║   Shopify Store: ${SHOPIFY_CONFIG.domain}  ║
-    ╚════════════════════════════════════════╝
-    📍 Local: http://localhost:${PORT}
-    🔧 Health: http://localhost:${PORT}/api/health
-    `);
-    });
-}
 
 // Exportar la app para Vercel
 module.exports = app;
