@@ -109,6 +109,7 @@ app.post('/api/search-order', async (req, res) => {
         });
     }
 
+  
     try {
         console.log(`🔍 Buscando pedido: ${orderNumber} - Email: ${email}`);
 
@@ -120,6 +121,7 @@ app.post('/api/search-order', async (req, res) => {
             limit: 50
         });
         console.log('🔐 Token presente:', !!SHOPIFY_CONFIG.accessToken);
+        console.log('🔐 Token primeros 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(0, 10));
 
         const response = await axios.get(shopifyUrl, {
             headers: {
@@ -207,16 +209,33 @@ app.post('/api/search-order', async (req, res) => {
             success: true,
             order: formattedOrder
         });
+
     } catch (error) {
         console.error('❌ CATCH - error.message:', error?.message);
-        console.error('❌ CATCH - error.stack:', error?.stack);
+        console.error('❌ CATCH - error.code:', error?.code);
         console.error('❌ CATCH - error.response?.status:', error?.response?.status);
-        console.error('❌ CATCH - error.response?.data:', error?.response?.data);
+        console.error('❌ CATCH - error.response?.statusText:', error?.response?.statusText);
+        console.error('❌ CATCH - error.response?.data:', JSON.stringify(error?.response?.data, null, 2));
+        console.error('❌ CATCH - error.config?.url:', error?.config?.url);
+        console.error('❌ CATCH - error.config?.headers:', error?.config?.headers);
 
-        return res.status(500).json({
+        if (error.response?.status === 404) {
+            console.error('🔴 ERROR 404: El endpoint no existe o el token no tiene permisos');
+            console.error('   Verifica:');
+            console.error('   1. El token tenga permisos read_orders');
+            console.error('   2. La API version 2024-10 sea válida para tu tienda');
+            console.error('   3. El dominio sea correcto: villaromana.myshopify.com');
+        }
+
+        if (error.response?.status === 401) {
+            console.error('🔴 ERROR 401: Token inválido o expirado');
+        }
+
+        return res.status(error.response?.status || 500).json({
             success: false,
-            message: 'Error interno del servidor',
-            debug: process.env.NODE_ENV !== 'production' ? (error?.response?.data || error?.message) : undefined
+            message: 'Error al consultar Shopify',
+            shopifyStatus: error.response?.status,
+            shopifyError: error.response?.data
         });
     }
 });
