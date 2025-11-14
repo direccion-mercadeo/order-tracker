@@ -128,40 +128,41 @@ app.get('/api/diagnostic', async (req, res) => {
         diagnostics.tests.domain = 'FAILED - Domain no configurado';
     }
 
-    // Test 4: Intentar llamada a Shopify
-    try {
-        const url = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
-        const response = await axios.get(url, {
-            headers: {
-                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
-        });
-        
-        diagnostics.tests.shopifyConnection = {
-            status: 'SUCCESS',
-            code: response.status,
-            shopName: response.data?.shop?.name,
-            shopPlan: response.data?.shop?.plan_name
-        };
-        
-        console.log('✅ Conexión a Shopify: SUCCESS');
-    } catch (error) {
-        diagnostics.tests.shopifyConnection = {
-            status: 'FAILED',
-            code: error.response?.status || error.code,
-            message: error.message,
-            responseData: error.response?.data,
-            url: error.config?.url,
-            headers: {
-                token: error.config?.headers?.['X-Shopify-Access-Token'] ? '***' : 'MISSING'
-            }
-        };
-        
-        console.log('❌ Conexión a Shopify: FAILED');
-        console.log('   Error:', error.message);
-        console.log('   Status:', error.response?.status);
+    // Test 4: Intentar múltiples endpoints de Shopify
+    diagnostics.tests.endpointsTest = {};
+    
+    const endpointsToTest = [
+        `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-07/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-04/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/api/admin/2023-10/shop.json`,
+    ];
+
+    for (const url of endpointsToTest) {
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                    'Content-Type': 'application/json'
+                },
+                timeout: 5000
+            });
+            
+            const version = url.split('/admin/')[1].split('/')[0];
+            diagnostics.tests.endpointsTest[version] = {
+                status: 'SUCCESS',
+                code: response.status,
+                shop: response.data?.shop?.name
+            };
+            console.log(`✅ ${version}: SUCCESS`);
+        } catch (error) {
+            const version = url.split('/admin/')[1].split('/')[0];
+            diagnostics.tests.endpointsTest[version] = {
+                status: 'FAILED',
+                code: error.response?.status || error.code
+            };
+            console.log(`❌ ${version}: ${error.response?.status || error.code}`);
+        }
     }
 
     return res.json(diagnostics);
