@@ -93,7 +93,7 @@ app.get('/api/token-test', async (req, res) => {
         // Intenta acceso básico a cualquier endpoint
         const response = await axios({
             method: 'GET',
-            url: `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-10/shop.json`,
+            url: `https://${SHOPIFY_CONFIG.domain}/admin/api/2024-10/shop.json`,
             headers: {
                 'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
                 'Content-Type': 'application/json',
@@ -192,10 +192,10 @@ app.get('/api/diagnostic', async (req, res) => {
     diagnostics.tests.endpointsTest = {};
     
     const endpointsToTest = [
-        `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`,
-        `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-07/shop.json`,
-        `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-04/shop.json`,
-        `https://${SHOPIFY_CONFIG.domain}/api/admin/2023-10/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/admin/api/2024-07/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/admin/api/2024-04/shop.json`,
+        `https://${SHOPIFY_CONFIG.domain}/admin/api/2023-10/shop.json`,
     ];
 
     for (const url of endpointsToTest) {
@@ -240,7 +240,7 @@ app.get('/api/debug-token', async (req, res) => {
         console.log('🔐 Token primeros 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(0, 10));
         console.log('🔐 Token últimos 10 chars:', SHOPIFY_CONFIG.accessToken?.substring(SHOPIFY_CONFIG.accessToken.length - 10));
         
-        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
+        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/shop.json`;
         console.log('📡 URL completa:', shopifyUrl);
         
         const response = await axios.get(shopifyUrl, {
@@ -331,7 +331,7 @@ app.get('/api/test-api-versions', async (req, res) => {
 
     for (const version of versionsToTest) {
         try {
-            const url = `https://${SHOPIFY_CONFIG.domain}/api/admin/${version}/shop.json`;
+            const url = `https://${SHOPIFY_CONFIG.domain}/admin/api/${version}/shop.json`;
             console.log(`\n🔗 Probando ${version}...`);
             console.log(`   URL: ${url}`);
             
@@ -381,7 +381,7 @@ app.get('/api/debug-orders/:email', async (req, res) => {
     try {
         console.log(`🔍 DEBUG: Listando órdenes para email: ${email}`);
 
-        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
+        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
         console.log('📡 URL:', shopifyUrl);
         console.log('📋 Parámetros:', { email, status: 'any', limit: 10 });
 
@@ -457,7 +457,7 @@ app.post('/api/search-order', async (req, res) => {
     try {
         console.log(`🔍 Buscando pedido: ${orderNumber} - Email: ${email}`);
 
-        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
+        const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/admin/api/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
         console.log('📡 URL completa:', shopifyUrl);
         console.log('📋 Parámetros:', {
             status: 'any',
