@@ -82,6 +82,66 @@ app.get('/api/health', (req, res) => {
 });
 
 // ----------------------------
+//    SIMPLE TOKEN TEST
+// ----------------------------
+app.get('/api/token-test', async (req, res) => {
+    console.log('\n🔐 ========== TOKEN TEST ==========');
+    console.log('Token:', SHOPIFY_CONFIG.accessToken?.substring(0, 20) + '...');
+    console.log('Domain:', SHOPIFY_CONFIG.domain);
+    
+    try {
+        // Intenta acceso básico a cualquier endpoint
+        const response = await axios({
+            method: 'GET',
+            url: `https://${SHOPIFY_CONFIG.domain}/api/admin/2024-10/shop.json`,
+            headers: {
+                'X-Shopify-Access-Token': SHOPIFY_CONFIG.accessToken,
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0'
+            },
+            timeout: 5000
+        });
+
+        return res.json({
+            success: true,
+            message: 'Token válido',
+            shop: response.data?.shop?.name,
+            plan: response.data?.shop?.plan_name
+        });
+
+    } catch (error) {
+        console.error('Error:', error.message);
+        console.error('Status:', error.response?.status);
+        console.error('Response:', error.response?.data);
+
+        if (error.response?.status === 401) {
+            return res.status(401).json({
+                success: false,
+                code: 401,
+                message: 'Token inválido, expirado o revocado',
+                action: 'Genera un nuevo token en Shopify Admin'
+            });
+        }
+
+        if (error.response?.status === 404) {
+            return res.status(404).json({
+                success: false,
+                code: 404,
+                message: 'Endpoint no encontrado - verifica dominio y versión API',
+                hint: 'Si TODOS los endpoints fallan con 404, probablemente el token sea inválido',
+                domain: SHOPIFY_CONFIG.domain
+            });
+        }
+
+        return res.status(error.response?.status || 500).json({
+            success: false,
+            code: error.response?.status || error.code,
+            message: error.message
+        });
+    }
+});
+
+// ----------------------------
 //    DIAGNOSTIC ENDPOINT
 // ----------------------------
 app.get('/api/diagnostic', async (req, res) => {
