@@ -7,7 +7,7 @@ const path = require ('path');
 const app = express();
 
 // Configuración CORS
-const cosrsOptions = {
+const corsOptions = {
     origin: function (origin, callback) {
         // Permitir localhost en desarrollo y el dominio en producción
          if (!origin) return callback(null, true);
