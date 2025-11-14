@@ -113,8 +113,13 @@ app.post('/api/search-order', async (req, res) => {
         console.log(`🔍 Buscando pedido: ${orderNumber} - Email: ${email}`);
 
         const shopifyUrl = `https://${SHOPIFY_CONFIG.domain}/api/admin/${SHOPIFY_CONFIG.apiVersion}/orders.json`;
-        console.log('📡 Shopify URL:', shopifyUrl);
-        console.log('🔐 Shopify header: X-Shopify-Access-Token set:', !!SHOPIFY_CONFIG.accessToken);
+        console.log('📡 URL completa:', shopifyUrl);
+        console.log('📋 Parámetros:', {
+            status: 'any',
+            email: email.toLowerCase().trim(),
+            limit: 50
+        });
+        console.log('🔐 Token presente:', !!SHOPIFY_CONFIG.accessToken);
 
         const response = await axios.get(shopifyUrl, {
             headers: {
@@ -125,51 +130,41 @@ app.post('/api/search-order', async (req, res) => {
                 status: 'any',
                 email: email.toLowerCase().trim(),
                 limit: 50
-            },
-            validateStatus: null // para poder loggear status incluso si es 4xx/5xx
+            }
         });
 
-        console.log('📊 Shopify response status:', response.status);
-        if (response.data && response.data.orders) {
-            console.log('📦 Órdenes retornadas:', response.data.orders.length);
-        } else {
-            console.log('⚠️ Shopify devolvió sin orders o body vacío:', typeof response.data);
-        }
+        console.log('✅ Respuesta de Shopify - Status:', response.status);
+        console.log('✅ Órdenes retornadas:', response.data?.orders?.length || 0);
 
-        if (!response || response.status >= 400) {
-            console.error('🔴 Shopify API error:', {
-                status: response?.status,
-                data: response?.data
-            });
-            return res.status(502).json({
+        if (!response.data?.orders || response.data.orders.length === 0) {
+            console.log('⚠️ No hay órdenes para este email');
+            return res.json({
                 success: false,
-                message: 'Error al consultar Shopify',
-                shopifyStatus: response?.status,
-                // no enviar token ni datos sensibles en producción
-                debug: process.env.NODE_ENV !== 'production' ? response?.data : undefined
+                message: 'No se encontraron órdenes para este correo electrónico.'
             });
         }
 
         const normalizedOrderNumber = orderNumber.replace(/[#\s]/g, '').trim();
+        console.log('🔄 Número normalizado:', normalizedOrderNumber);
 
         const order = (response.data.orders || []).find(o => {
             const normalizedName = (o.name || '').replace(/[#\s]/g, '').trim();
-            return (
-                o.order_number?.toString() === normalizedOrderNumber ||
-                normalizedName === normalizedOrderNumber
-            );
+            const match = o.order_number?.toString() === normalizedOrderNumber || normalizedName === normalizedOrderNumber;
+            if (match) console.log('✅ Orden encontrada:', o.name);
+            return match;
         });
 
         if (!order) {
-            console.log('❌ Orden no encontrada. Listado de names:', (response.data.orders || []).map(o=>o.name));
+            console.log('❌ Orden NO encontrada');
+            console.log('📌 Órdenes disponibles:', (response.data.orders || []).map(o => ({ name: o.name, order_number: o.order_number })));
             return res.json({
                 success: false,
                 message: 'Pedido no encontrado con el numero y correo proporcionados.'
             });
         }
 
-        // ... formatea la orden como antes ...
-        // ...existing code...
+        console.log('📦 Procesando datos de la orden...');
+
         const formattedOrder = {
             id: order.id,
             orderNumber: order.order_number,
@@ -180,22 +175,25 @@ app.post('/api/search-order', async (req, res) => {
             currency: order.currency,
             financialStatus: order.financial_status,
             fulfillmentStatus: order.fulfillment_status,
-            coordinadoraTraking: (order.fulfillments || []).find(f=>f.tracking_number)?.tracking_number || null,
+            coordinadoraTraking: (order.fulfillments || []).find(f => f.tracking_number)?.tracking_number || null,
             customer: {
                 name: order.customer ? `${order.customer.first_name || ''} ${order.customer.last_name || ''}`.trim() : 'No disponible',
                 email: order.customer?.email || 'No disponible'
             },
             shippingAddress: order.shipping_address || null,
             lineItems: (order.line_items || []).map(item => ({
-                title: item.title,
-                quantity: item.quantity,
-                price: item.price,
-                totalPrice: (item.total_price || 0) * (item.quantity || 1)
+                title: item.title || 'Sin título',
+                quantity: item.quantity || 0,
+                price: item.price || '0',
+                totalPrice: ((item.total_price || 0) * (item.quantity || 1)).toFixed(2)
             })),
             subtotalPrice: order.subtotal_price || '0.00',
             totalDiscounts: order.total_discounts || '0.00',
             totalTax: order.total_tax || '0.00',
-            shippingLines: order.shipping_lines || [],
+            shippingLines: (order.shipping_lines || []).map(s => ({
+                title: s.title || 'Envío',
+                price: s.price || '0'
+            })),
             fulfillments: (order.fulfillments || []).map(f => ({
                 trackingNumber: f.tracking_number,
                 trackingUrl: f.tracking_url,
@@ -204,8 +202,11 @@ app.post('/api/search-order', async (req, res) => {
             }))
         };
 
-        return res.json({ success: true, order: formattedOrder });
-
+        console.log('✅ === BÚSQUEDA EXITOSA ===');
+        return res.json({
+            success: true,
+            order: formattedOrder
+        });
     } catch (error) {
         console.error('❌ CATCH - error.message:', error?.message);
         console.error('❌ CATCH - error.stack:', error?.stack);
