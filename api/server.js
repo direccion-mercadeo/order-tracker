@@ -63,7 +63,7 @@ app.get('/api/health', (req, res) => {
 });
 //Endpoint: Buscar pedido
 
-app.post('/api/search-order', async (req, res) => {
+app.post('/api/server/search-order', async (req, res) => {
     const {orderNumber, email} = req.body;
 
     //Validacion de entrada
@@ -219,7 +219,7 @@ app.get('/', (req, res) => {
 
 
 // Exportar la app para Vercel
-module.exports = serverless(app);
+module.exports.handler = serverless(app);
 
     //manejo de errores no capturados
 
